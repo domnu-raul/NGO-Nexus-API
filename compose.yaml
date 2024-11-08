@@ -11,7 +11,7 @@ services:
       TZ: Europe/Bucharest
     restart: unless-stopped
     expose:
-      - "9000"
+      - "8000"
     networks:
       - private
       - intern
