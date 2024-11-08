@@ -12,6 +12,7 @@ RUN apt-get update \
 RUN curl -sL https://getcomposer.org/installer | php -- --install-dir /usr/bin --filename composer
 
 COPY ./docker/docker-entrypoint.sh /docker-entrypoint.sh
+
 COPY ./docker/default.conf /etc/nginx/sites-available/default
 
 RUN chmod +x /docker-entrypoint.sh

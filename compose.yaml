@@ -45,7 +45,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data:rw
     ports:
-      - "5432:5432"  # Expose PostgreSQL on port 5432
+      - "5432:5432" 
     networks:
       - intern
 
