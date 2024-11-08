@@ -1,6 +1,37 @@
 services:
-###> doctrine/doctrine-bundle ###
+  php:
+    container_name: NGO-Nexus-PHP
+    build:
+      context: .
+    volumes:
+      - ./:/srv/app/
+    depends_on:
+      - database
+    environment:
+      TZ: Europe/Bucharest
+    restart: unless-stopped
+    expose:
+      - "9000"
+    networks:
+      - private
+      - intern
+
+  nginx:
+    image: nginx:latest
+    container_name: NGO-Nexus-NGINX
+    ports:
+      - "8181:80"
+    volumes:
+      - .:/srv/app/
+      - ./docker/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - public
+      - private
+
   database:
+    container_name: NGO-Nexus-DB
     image: postgres:${POSTGRES_VERSION:-16}-alpine
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-app}
@@ -12,13 +43,16 @@ services:
       retries: 5
       start_period: 60s
     volumes:
-      - database_data:/var/lib/postgresql/data:rw
+      - postgres_data:/var/lib/postgresql/data:rw
     ports:
       - "5432:5432"  # Expose PostgreSQL on port 5432
-###< doctrine/doctrine-bundle ###
+    networks:
+      - intern
+
+networks:
+  public:
+  private:
+  intern:
 
 volumes:
-###> doctrine/doctrine-bundle ###
-  database_data:
-###< doctrine/doctrine-bundle ###
-
+  postgres_data:
