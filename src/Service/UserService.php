@@ -7,7 +7,6 @@ use App\Exception\InvalidFieldValueException;
 use App\Exception\MissingFieldsException;
 use App\Exception\UniqueFieldConflictException;
 use App\Repository\UserRepository;
-use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -17,7 +16,9 @@ class UserService
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly UserRepository $userRepository
-    ) {}
+    )
+    {
+    }
 
 
     /**
@@ -27,8 +28,7 @@ class UserService
      * @throws UniqueFieldConflictException if other are other users with same username/email
      * @throws InvalidFieldValueException
      */
-    private function validateRequest(Request $request): array
-    {
+    private function validateRequest(Request $request): array {
         $data = json_decode($request->getContent(), true);
 
         //fields existence
@@ -41,7 +41,6 @@ class UserService
         if (empty($username) || strlen($username) > 40 || strlen($username) <= 3) {
             throw new InvalidFieldValueException("username", $username);
         }
-
         $email = trim($data['email']);
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 255) {
             throw new InvalidFieldValueException("email", $email);
@@ -90,7 +89,7 @@ class UserService
     private function getUserOnIdentifier(string $identifier): ?User
     {
         $user = $this->userRepository->findOneBy(["username" => $identifier]);
-        if ($user == null) {
+        if( $user == null ) {
             $user = $this->userRepository->findOneBy(["email" => $identifier]);
         }
 
@@ -103,8 +102,7 @@ class UserService
      * @throws AuthenticationException if the credentials are invalid
      * @throws MissingFieldsException
      */
-    public function checkCredentials(Request $request): User
-    {
+    public function checkCredentials(Request $request): User{
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['identifier']) || !isset($data['password'])) {
